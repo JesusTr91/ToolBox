@@ -1,0 +1,272 @@
+
+```{r}
+library("readxl")
+library("dplyr")
+library("janitor")
+library("tidyverse")
+library("stringr")
+library("xlsx")
+library("lubridate")
+library("openxlsx")
+library("chron")
+```
+
+```{r warning=FALSE, message=FALSE}
+path <- 'CRM _AsistentesLince15Oct.xlsx'
+Berenice <- read_excel(path, sheet='Berenice N.')
+Javier <- read_excel(path, sheet='Javier M.')
+Irving <- read_excel(path, sheet='Irving H.')
+Jesus <- read_excel(path, sheet='Jesús G.')
+Jessica <- read_excel(path, sheet='Jessica M.')
+Jonathan <- read_excel(path, sheet='Jonathan B.')
+Malenie <- read_excel(path, sheet='Malenie G.')
+Marcos <- read_excel(path, sheet='Marcos L.')
+Patricia <- read_excel(path, sheet='Patricia S.')
+Rolando <- read_excel(path, sheet='Rolando C.')
+Alejandro <- read_excel(path, sheet='Alejandro J.')
+Veronica <- read_excel(path, sheet='Veronica B.')
+
+Berenice <- Berenice[4:nrow(Berenice),]
+Berenice <- Berenice %>% row_to_names(row_number = 1)
+colnames(Berenice)[19] <- 'Estatus.Int'
+Berenice <- Berenice %>% select(c(2:10, 12:20))
+Berenice$Fecha <- as.numeric(as.character(Berenice$Fecha))
+Berenice$Fecha <- as.POSIXct(Berenice$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Berenice$Fecha <- format(as.POSIXct(Berenice$Fecha), format = "%d-%m-%Y")
+Berenice$Hora <- as.numeric(as.character(Berenice$Hora))
+Berenice$Hora <- as.POSIXct(Berenice$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Berenice$Fin <- as.numeric(as.character(Berenice$Fin))
+Berenice$Fin <- as.POSIXct(Berenice$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Berenice$Start <- format(as.POSIXct(Berenice$Hora), format = "%H:%M:%S")
+Berenice$Finish <- format(as.POSIXct(Berenice$Fin), format = "%H:%M:%S")
+Berenice$Start <- chron(times=Berenice$Start)
+Berenice$Finish <- chron(times=Berenice$Finish)
+Berenice <- Berenice %>% drop_na(Estatus.Int)
+Berenice <- Berenice %>% drop_na(Fin)
+Berenice$Agente <- "Berenice"
+
+Javier <- Javier[4:nrow(Javier),]
+Javier <- Javier %>% row_to_names(row_number = 1)
+colnames(Javier)[19] <- 'Estatus.Int'
+Javier <- Javier %>% select(c(2:10, 12:20))
+Javier$Fecha <- as.numeric(as.character(Javier$Fecha))
+Javier$Fecha <- as.POSIXct(Javier$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Javier$Fecha <- format(as.POSIXct(Javier$Fecha), format = "%d-%m-%Y")
+Javier$Hora <- as.numeric(as.character(Javier$Hora))
+Javier$Hora <- as.POSIXct(Javier$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Javier$Fin <- as.numeric(as.character(Javier$Fin))
+Javier$Fin <- as.POSIXct(Javier$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Javier$Start <- format(as.POSIXct(Javier$Hora), format = "%H:%M:%S")
+Javier$Finish <- format(as.POSIXct(Javier$Fin), format = "%H:%M:%S")
+Javier$Start <- chron(times=Javier$Start)
+Javier$Finish <- chron(times=Javier$Finish)
+Javier <- Javier %>% drop_na(Estatus.Int)
+Javier <- Javier %>% drop_na(Fin)
+Javier$Agente <- "Javier"
+
+Irving <- Irving[4:nrow(Irving),]
+Irving <- Irving %>% row_to_names(row_number = 1)
+colnames(Irving)[19] <- 'Estatus.Int'
+Irving <- Irving %>% select(c(2:10, 12:20))
+Irving$Fecha <- as.numeric(as.character(Irving$Fecha))
+Irving$Fecha <- as.POSIXct(Irving$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Irving$Fecha <- format(as.POSIXct(Irving$Fecha), format = "%d-%m-%Y")
+Irving$Hora <- as.numeric(as.character(Irving$Hora))
+Irving$Hora <- as.POSIXct(Irving$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Irving$Fin <- as.numeric(as.character(Irving$Fin))
+Irving$Fin <- as.POSIXct(Irving$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Irving$Start <- format(as.POSIXct(Irving$Hora), format = "%H:%M:%S")
+Irving$Finish <- format(as.POSIXct(Irving$Fin), format = "%H:%M:%S")
+Irving$Start <- chron(times=Irving$Start)
+Irving$Finish <- chron(times=Irving$Finish)
+Irving <- Irving %>% drop_na(Estatus.Int)
+Irving <- Irving %>% drop_na(Fin)
+Irving$Agente <- "Irving"
+
+Jesus <- Jesus[4:nrow(Jesus),]
+Jesus <- Jesus %>% row_to_names(row_number = 1)
+colnames(Jesus)[19] <- 'Estatus.Int'
+Jesus <- Jesus %>% select(c(2:10, 12:20))
+Jesus$Fecha <- as.numeric(as.character(Jesus$Fecha))
+Jesus$Fecha <- as.POSIXct(Jesus$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Jesus$Fecha <- format(as.POSIXct(Jesus$Fecha), format = "%d-%m-%Y")
+Jesus$Hora <- as.numeric(as.character(Jesus$Hora))
+Jesus$Hora <- as.POSIXct(Jesus$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Jesus$Fin <- as.numeric(as.character(Jesus$Fin))
+Jesus$Fin <- as.POSIXct(Jesus$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Jesus$Start <- format(as.POSIXct(Jesus$Hora), format = "%H:%M:%S")
+Jesus$Finish <- format(as.POSIXct(Jesus$Fin), format = "%H:%M:%S")
+Jesus$Start <- chron(times=Jesus$Start)
+Jesus$Finish <- chron(times=Jesus$Finish)
+Jesus <- Jesus %>% drop_na(Estatus.Int)
+Jesus <- Jesus %>% drop_na(Fin)
+Jesus$Agente <- "Jesus"
+
+Jessica <- Jessica[4:nrow(Jessica),]
+Jessica <- Jessica %>% row_to_names(row_number = 1)
+colnames(Jessica)[19] <- 'Estatus.Int'
+Jessica <- Jessica %>% select(c(2:10, 12:20))
+Jessica$Fecha <- as.numeric(as.character(Jessica$Fecha))
+Jessica$Fecha <- as.POSIXct(Jessica$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Jessica$Fecha <- format(as.POSIXct(Jessica$Fecha), format = "%d-%m-%Y")
+Jessica$Hora <- as.numeric(as.character(Jessica$Hora))
+Jessica$Hora <- as.POSIXct(Jessica$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Jessica$Fin <- as.numeric(as.character(Jessica$Fin))
+Jessica$Fin <- as.POSIXct(Jessica$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Jessica$Start <- format(as.POSIXct(Jessica$Hora), format = "%H:%M:%S")
+Jessica$Finish <- format(as.POSIXct(Jessica$Fin), format = "%H:%M:%S")
+Jessica$Start <- chron(times=Jessica$Start)
+Jessica$Finish <- chron(times=Jessica$Finish)
+Jessica <- Jessica %>% drop_na(Estatus.Int)
+Jessica <- Jessica %>% drop_na(Fin)
+Jessica$Agente <- "Jessica"
+
+Jonathan <- Jonathan[4:nrow(Jonathan),]
+Jonathan <- Jonathan %>% row_to_names(row_number = 1)
+colnames(Jonathan)[19] <- 'Estatus.Int'
+Jonathan <- Jonathan %>% select(c(2:10, 12:20))
+Jonathan$Fecha <- as.numeric(as.character(Jonathan$Fecha))
+Jonathan$Fecha <- as.POSIXct(Jonathan$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Jonathan$Fecha <- format(as.POSIXct(Jonathan$Fecha), format = "%d-%m-%Y")
+Jonathan$Hora <- as.numeric(as.character(Jonathan$Hora))
+Jonathan$Hora <- as.POSIXct(Jonathan$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Jonathan$Fin <- as.numeric(as.character(Jonathan$Fin))
+Jonathan$Fin <- as.POSIXct(Jonathan$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Jonathan$Start <- format(as.POSIXct(Jonathan$Hora), format = "%H:%M:%S")
+Jonathan$Finish <- format(as.POSIXct(Jonathan$Fin), format = "%H:%M:%S")
+Jonathan$Start <- chron(times=Jonathan$Start)
+Jonathan$Finish <- chron(times=Jonathan$Finish)
+Jonathan <- Jonathan %>% drop_na(Estatus.Int)
+Jonathan <- Jonathan %>% drop_na(Fin)
+Jonathan$Agente <- "Jonathan"
+
+Malenie <- Malenie[4:nrow(Malenie),]
+Malenie <- Malenie %>% row_to_names(row_number = 1)
+colnames(Malenie)[19] <- 'Estatus.Int'
+Malenie <- Malenie %>% select(c(2:10, 12:20))
+Malenie$Fecha <- as.numeric(as.character(Malenie$Fecha))
+Malenie$Fecha <- as.POSIXct(Malenie$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Malenie$Fecha <- format(as.POSIXct(Malenie$Fecha), format = "%d-%m-%Y")
+Malenie$Hora <- as.numeric(as.character(Malenie$Hora))
+Malenie$Hora <- as.POSIXct(Malenie$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Malenie$Fin <- as.numeric(as.character(Malenie$Fin))
+Malenie$Fin <- as.POSIXct(Malenie$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Malenie$Start <- format(as.POSIXct(Malenie$Hora), format = "%H:%M:%S")
+Malenie$Finish <- format(as.POSIXct(Malenie$Fin), format = "%H:%M:%S")
+Malenie$Start <- chron(times=Malenie$Start)
+Malenie$Finish <- chron(times=Malenie$Finish)
+Malenie <- Malenie %>% drop_na(Estatus.Int)
+Malenie <- Malenie %>% drop_na(Fin)
+Malenie$Agente <- "Malenie"
+
+Marcos <- Marcos[4:nrow(Marcos),]
+Marcos <- Marcos %>% row_to_names(row_number = 1)
+colnames(Marcos)[19] <- 'Estatus.Int'
+Marcos <- Marcos %>% select(c(2:10, 12:20))
+Marcos$Fecha <- as.numeric(as.character(Marcos$Fecha))
+Marcos$Fecha <- as.POSIXct(Marcos$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Marcos$Fecha <- format(as.POSIXct(Marcos$Fecha), format = "%d-%m-%Y")
+Marcos$Hora <- as.numeric(as.character(Marcos$Hora))
+Marcos$Hora <- as.POSIXct(Marcos$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Marcos$Fin <- as.numeric(as.character(Marcos$Fin))
+Marcos$Fin <- as.POSIXct(Marcos$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Marcos$Start <- format(as.POSIXct(Marcos$Hora), format = "%H:%M:%S")
+Marcos$Finish <- format(as.POSIXct(Marcos$Fin), format = "%H:%M:%S")
+Marcos$Start <- chron(times=Marcos$Start)
+Marcos$Finish <- chron(times=Marcos$Finish)
+Marcos <- Marcos %>% drop_na(Estatus.Int)
+Marcos <- Marcos %>% drop_na(Fin)
+Marcos$Agente <- "Marcos"
+
+Patricia <- Patricia[4:nrow(Patricia),]
+Patricia <- Patricia %>% row_to_names(row_number = 1)
+colnames(Patricia)[19] <- 'Estatus.Int'
+Patricia <- Patricia %>% select(c(2:10, 12:20))
+Patricia$Fecha <- as.numeric(as.character(Patricia$Fecha))
+Patricia$Fecha <- as.POSIXct(Patricia$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Patricia$Fecha <- format(as.POSIXct(Patricia$Fecha), format = "%d-%m-%Y")
+Patricia$Hora <- as.numeric(as.character(Patricia$Hora))
+Patricia$Hora <- as.POSIXct(Patricia$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Patricia$Fin <- as.numeric(as.character(Patricia$Fin))
+Patricia$Fin <- as.POSIXct(Patricia$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Patricia$Start <- format(as.POSIXct(Patricia$Hora), format = "%H:%M:%S")
+Patricia$Finish <- format(as.POSIXct(Patricia$Fin), format = "%H:%M:%S")
+Patricia$Start <- chron(times=Patricia$Start)
+Patricia$Finish <- chron(times=Patricia$Finish)
+Patricia <- Patricia %>% drop_na(Estatus.Int)
+Patricia <- Patricia %>% drop_na(Fin)
+Patricia$Agente <- "Patricia"
+
+Rolando <- Rolando[4:nrow(Rolando),]
+Rolando <- Rolando %>% row_to_names(row_number = 1)
+colnames(Rolando)[19] <- 'Estatus.Int'
+Rolando <- Rolando %>% select(c(2:10, 12:20))
+Rolando$Fecha <- as.numeric(as.character(Rolando$Fecha))
+Rolando$Fecha <- as.POSIXct(Rolando$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Rolando$Fecha <- format(as.POSIXct(Rolando$Fecha), format = "%d-%m-%Y")
+Rolando$Hora <- as.numeric(as.character(Rolando$Hora))
+Rolando$Hora <- as.POSIXct(Rolando$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Rolando$Fin <- as.numeric(as.character(Rolando$Fin))
+Rolando$Fin <- as.POSIXct(Rolando$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Rolando$Start <- format(as.POSIXct(Rolando$Hora), format = "%H:%M:%S")
+Rolando$Finish <- format(as.POSIXct(Rolando$Fin), format = "%H:%M:%S")
+Rolando$Start <- chron(times=Rolando$Start)
+Rolando$Finish <- chron(times=Rolando$Finish)
+Rolando <- Rolando %>% drop_na(Estatus.Int)
+Rolando <- Rolando %>% drop_na(Fin)
+Rolando$Agente <- "Rolando"
+
+Alejandro <- Alejandro[4:nrow(Alejandro),]
+Alejandro <- Alejandro %>% row_to_names(row_number = 1)
+colnames(Alejandro)[19] <- 'Estatus.Int'
+Alejandro <- Alejandro %>% select(c(2:10, 12:20))
+Alejandro$Fecha <- as.numeric(as.character(Alejandro$Fecha))
+Alejandro$Fecha <- as.POSIXct(Alejandro$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Alejandro$Fecha <- format(as.POSIXct(Alejandro$Fecha), format = "%d-%m-%Y")
+Alejandro$Hora <- as.numeric(as.character(Alejandro$Hora))
+Alejandro$Hora <- as.POSIXct(Alejandro$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Alejandro$Fin <- as.numeric(as.character(Alejandro$Fin))
+Alejandro$Fin <- as.POSIXct(Alejandro$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Alejandro$Start <- format(as.POSIXct(Alejandro$Hora), format = "%H:%M:%S")
+Alejandro$Finish <- format(as.POSIXct(Alejandro$Fin), format = "%H:%M:%S")
+Alejandro$Start <- chron(times=Alejandro$Start)
+Alejandro$Finish <- chron(times=Alejandro$Finish)
+Alejandro <- Alejandro %>% drop_na(Estatus.Int)
+Alejandro <- Alejandro %>% drop_na(Fin)
+Alejandro$Agente <- "Alejandro"
+
+Veronica <- Veronica[4:nrow(Veronica),]
+Veronica <- Veronica %>% row_to_names(row_number = 1)
+colnames(Veronica)[19] <- 'Estatus.Int'
+Veronica <- Veronica %>% select(c(2:10, 12:20))
+Veronica$Fecha <- as.numeric(as.character(Veronica$Fecha))
+Veronica$Fecha <- as.POSIXct(Veronica$Fecha * (60*60*24), origin="1899-12-30", tz="GMT")
+Veronica$Fecha <- format(as.POSIXct(Veronica$Fecha), format = "%d-%m-%Y")
+Veronica$Hora <- as.numeric(as.character(Veronica$Hora))
+Veronica$Hora <- as.POSIXct(Veronica$Hora * (60*60*24), origin="1899-12-30", tz="GMT")
+Veronica$Fin <- as.numeric(as.character(Veronica$Fin))
+Veronica$Fin <- as.POSIXct(Veronica$Fin * (60*60*24), origin="1899-12-30", tz="GMT")
+Veronica$Start <- format(as.POSIXct(Veronica$Hora), format = "%H:%M:%S")
+Veronica$Finish <- format(as.POSIXct(Veronica$Fin), format = "%H:%M:%S")
+Veronica$Start <- chron(times=Veronica$Start)
+Veronica$Finish <- chron(times=Veronica$Finish)
+Veronica <- Veronica %>% drop_na(Estatus.Int)
+Veronica <- Veronica %>% drop_na(Fin)
+Veronica$Agente <- "Veronica"
+```
+
+```{r}
+Total <- rbind(Berenice, Irving, Javier, Jessica, Jesus, Jonathan, Malenie, Marcos, Patricia, Rolando, Alejandro, Veronica)
+file_path <- "C:/Users/Propietario/Desktop/CRM Analisis/Proceso.xlsx"
+write.xlsx(Total, file_path, sheetName = "Proceso", col.names = TRUE, row.names = TRUE, append = FALSE)
+dim(Total)
+Total_Agente<-dplyr::count(Total, Agente, sort = TRUE)
+Total_Agente
+```
+
+```{r}
+Total$Start <- as.POSIXlt(Total$Start)
+pct <- as.POSIXct(plt)
+difftime(Total$Start, Total$Finish, units = "seconds")
+```
+
