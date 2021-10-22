@@ -1,0 +1,290 @@
+
+
+```{r message=FALSE}
+
+library("readxl")
+library("dplyr")
+library("janitor")
+library("tidyverse")
+library("stringr")
+library("xlsx")
+```
+## Bajas
+```{r warning=FALSE}
+Bajas_Tempr <- "9. Informe Bajas Tempranas Export.xlsx"
+Bajas_Form <- '2. Informe Bajas Export 20102021.xlsx'
+
+bt <- read_excel(Bajas_Tempr)
+bf <- read_excel(Bajas_Form)
+# Correcting header
+bf <- bf[4:nrow(bf),]
+bf <- bf %>% row_to_names(row_number = 1)
+bt <- bt[3:nrow(bt),]
+bt <- bt %>% row_to_names(row_number = 1)
+#header.true <- function(df) {
+#  names(df) <- as.character(unlist(df[1,]))
+#  df[-1,]}
+
+# Selecting Matricula, changing column name and adding droping type
+bt <- bt %>% select('Alumno No Cuenta')
+bf <- bf %>% select('Alumno No Cuenta')
+bt <- bt %>% rename(Matrícula = 'Alumno No Cuenta')
+bf <- bf %>% rename(Matrícula = 'Alumno No Cuenta')
+bt$Baja='Baja Temprana'
+bf$Baja='Baja Formal'
+bajas <- rbind(bt,bf)
+bajas$validacion_b <- bajas$Matrícula
+```
+
+## Centros de Calificaciones
+
+```{r warning=FALSE}
+## Reading files
+Centros_OM <- 'Reporte de calificaciones - OM_2103_53_20102021.xlsx'
+Centros_XO <- 'Reporte de calificaciones - XO_2103_53_20102021.xlsx'
+cc_om <- read_excel(Centros_OM)
+cc_xo <- read_excel(Centros_XO)
+
+## Selecting order
+om_cal <- cc_om
+om_cal$validacion_cc <- om_cal$Matrícula
+om_cal <- om_cal %>% rename(ECK = Grupo)
+om_cal$Mat_eck <- str_c(om_cal$Matrícula, ' ', om_cal$ECK)
+om_cal <- om_cal %>% select('Mat_eck', 'validacion_cc', 'Materia', 'Último Acceso', 'Actividad 01', 'Actividad 02', 
+                            'Actividad 03', 'Actividad 04', 'Actividad 05', 'Actividad 06', 'Actividad 07', 'Actividad 08', 
+                           'Actividad 09', 'Actividad 10', 'Actividad 11', 'Actividad 12', 'Actividad 13', 'Actividad 14', 
+                           'Actividad 15', 'Actividad 16', 'Actividad 17', 'Actividad 18', 'Actividad 19', 'Actividad 20', 
+                           'Actividad 21', 'Actividad 22', 'Actividad 23', 'Actividad 24', 'Actividad 25', 'Actividad 26', 
+                           'Actividad 27', 'Actividad 28', 'Actividad 29', 'Actividad 30', 'Actividad 31')
+xo_cal <- cc_xo %>% rename(ECK = Grupo)
+xo_cal$Mat_eck <- str_c(xo_cal$Matrícula, ' ', xo_cal$ECK)
+xo_cal$validacion_cc <- xo_cal$Matrícula
+xo_cal <- xo_cal %>% select('Mat_eck', 'validacion_cc', 'Materia', 'Último Acceso', 'Actividad 01', 'Actividad 02', 
+                            'Actividad 03', 'Actividad 04', 'Actividad 05', 'Actividad 06', 'Actividad 07', 'Actividad 08', 
+                            'Actividad 09', 'Actividad 10', 'Actividad 11', 'Actividad 12', 'Actividad 13', 'Actividad 14', 
+                            'Actividad 15', 'Actividad 16', 'Actividad 17', 'Actividad 18', 'Actividad 19', 'Actividad 20', 
+                            'Actividad 21', 'Actividad 22', 'Actividad 23', 'Actividad 24', 'Actividad 25', 'Actividad 26', 
+                            'Actividad 27', 'Actividad 28', 'Actividad 29', 'Actividad 30', 'Actividad 31')
+```
+
+## Bases
+
+### XO
+
+```{r}
+Franco <- read_excel('Franco.xlsx')
+Franco <- Franco %>% rename(Matrícula = MATRICULA)
+Franco$Mat_eck <- str_c(Franco$Matrícula, ' ', Franco$ECK)
+Franco_cc <- merge(x= Franco, y=xo_cal, by='Mat_eck', all.x=TRUE)
+Franco_b <- merge(x= Franco_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Franco_b <- Franco_b %>% relocate(Mat_eck, .before = Matrícula)
+
+Itzel <- read_excel('Itzel.xlsx')
+Itzel <- Itzel %>% rename(Matrícula = MATRICULA)
+Itzel$Mat_eck <- str_c(Itzel$Matrícula, ' ', Itzel$ECK)
+Itzel_cc <- merge(x= Itzel, y=xo_cal, by='Mat_eck', all.x=TRUE)
+Itzel_b <- merge(x= Itzel_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Itzel_b <- Itzel_b %>% relocate(Mat_eck, .before = Matrícula)
+
+Fanny <- read_excel('Fanny.xlsx')
+Fanny <- Fanny %>% rename(Matrícula = MATRICULA)
+Fanny$Mat_eck <- str_c(Fanny$Matrícula, ' ', Fanny$ECK)
+Fanny_cc <- merge(x= Fanny, y=xo_cal, by='Mat_eck', all.x=TRUE)
+Fanny_b <- merge(x= Fanny_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Fanny_b <- Fanny_b %>% relocate(Mat_eck, .before = Matrícula)
+
+Laura <- read_excel('Laura.xlsx')
+Laura <- Laura %>% rename(Matrícula = MATRICULA)
+Laura$Mat_eck <- str_c(Laura$Matrícula, ' ', Laura$ECK)
+Laura_cc <- merge(x= Laura, y=xo_cal, by='Mat_eck', all.x=TRUE)
+Laura_b <- merge(x= Laura_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Laura_b <- Laura_b %>% relocate(Mat_eck, .before = Matrícula)
+
+Ivonne <- read_excel('Ivonne.xlsx')
+Ivonne <- Ivonne %>% rename(Matrícula = MATRICULA)
+Ivonne$Mat_eck <- str_c(Ivonne$Matrícula, ' ', Ivonne$ECK)
+Ivonne_cc <- merge(x= Ivonne, y=xo_cal, by='Mat_eck', all.x=TRUE)
+Ivonne_b <- merge(x= Ivonne_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Ivonne_b <- Ivonne_b %>% relocate(Mat_eck, .before = Matrícula)
+
+JuanMa <- read_excel('JuanMa.xlsx')
+JuanMa <- JuanMa %>% rename(Matrícula = MATRICULA)
+JuanMa$Mat_eck <- str_c(JuanMa$Matrícula, ' ', JuanMa$ECK)
+JuanMa_cc <- merge(x= JuanMa, y=xo_cal, by='Mat_eck', all.x=TRUE)
+JuanMa_b <- merge(x= JuanMa_cc, y=bajas, by='Matrícula', all.x=TRUE)
+JuanMa_b <- JuanMa_b %>% relocate(Mat_eck, .before = Matrícula)
+```
+
+### OM
+
+```{r}
+AnnaKaren <- read_excel('AnnaKaren.xlsx')
+AnnaKaren <- AnnaKaren %>% rename(Matrícula = MATRICULA)
+AnnaKaren$Mat_eck <- str_c(AnnaKaren$Matrícula, ' ', AnnaKaren$ECK)
+AnnaKaren_cc <- merge(x= AnnaKaren, y=om_cal, by='Mat_eck', all.x=TRUE)
+AnnaKaren_b <- merge(x= AnnaKaren_cc, y=bajas, by='Matrícula', all.x=TRUE)
+AnnaKaren_b <- AnnaKaren_b %>% relocate(Mat_eck, .before = Matrícula)
+
+Andrea <- read_excel('Andrea.xlsx')
+Andrea <- Andrea %>% rename(Matrícula = MATRICULA)
+Andrea$Mat_eck <- str_c(Andrea$Matrícula, ' ', Andrea$ECK)
+Andrea_cc <- merge(x= Andrea, y=om_cal, by='Mat_eck', all.x=TRUE)
+Andrea_b <- merge(x= Andrea_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Andrea_b <- Andrea_b %>% relocate(Mat_eck, .before = Matrícula)
+
+Maribel <- read_excel('Maribel.xlsx')
+Maribel <- Maribel %>% rename(Matrícula = MATRICULA)
+Maribel$Mat_eck <- str_c(Maribel$Matrícula, ' ', Maribel$ECK)
+Maribel_cc <- merge(x= Maribel, y=om_cal, by='Mat_eck', all.x=TRUE)
+Maribel_b <- merge(x= Maribel_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Maribel_b <- Maribel_b %>% relocate(Mat_eck, .before = Matrícula)
+
+Liliana <- read_excel('Liliana.xlsx')
+Liliana <- Liliana %>% rename(Matrícula = MATRICULA)
+Liliana$Mat_eck <- str_c(Liliana$Matrícula, ' ', Liliana$ECK)
+Liliana_cc <- merge(x= Liliana, y=om_cal, by='Mat_eck', all.x=TRUE)
+Liliana_b <- merge(x= Liliana_cc, y=bajas, by='Matrícula', all.x=TRUE)
+Liliana_b <- Liliana_b %>% relocate(Mat_eck, .before = Matrícula)
+```
+
+```{r}
+file1 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Andrea.xlsx"
+file2 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Annakaren.xlsx"
+file3 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Fanny.xlsx"
+file4 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Franco.xlsx"
+file5 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Itzel.xlsx"
+file6 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Ivonne.xlsx"
+file7 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_JuanMa.xlsx"
+file8 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Laura.xlsx"
+file9 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Liliana.xlsx"
+file10 <- "C:/Users/Propietario/Desktop/Sistema Asesores/Actualizacion/Asignacion_Maribel.xlsx"
+
+write.xlsx(Andrea_b, file1, sheetName = "Asignacion_Andrea", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(AnnaKaren_b, file2, sheetName = "Asignacion_Annakaren", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Fanny_b, file3, sheetName = "Asignacion_Fanny", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Franco_b, file4, sheetName = "Asignacion_Franco", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Itzel_b, file5, sheetName = "Asignacion_Itzel", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Ivonne_b, file6, sheetName = "Asignacion_Ivonne", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(JuanMa_b, file7, sheetName = "Asignacion_JuanMa", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Laura_b, file8, sheetName = "Asignacion_Laura", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Liliana_b, file9, sheetName = "Asignacion_Liliana", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Maribel_b, file10, sheetName = "Asignacion_Maribel", col.names = TRUE, row.names = TRUE, append = FALSE)
+```
+
+#```{r}
+Asignacion_Total_OM <- rbind(Andrea, AnnaKaren, Liliana, Maribel)
+Asignacion_Total_XO <- rbind(Fanny, Franco, Itzel, Ivonne, JuanMa, Laura)
+file_pathom <- "C:/Users/Propietario/Desktop/Asignacion_totalOM.xlsx"
+file_pathxo <- "C:/Users/Propietario/Desktop/Asignacion_totalXO.xlsx"
+write.xlsx(Asignacion_Total_OM, file_pathom, sheetName = "A", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(Asignacion_Total_XO, file_pathxo, sheetName = "A", col.names = TRUE, row.names = TRUE, append = FALSE)
+
+Data <- data.frame(col1=c("1","2","New","3","Gone"), stringsAsFactors=FALSE)
+Data
+List <- lapply(as.list(Data$col1), type.convert, as.is=TRUE)
+List
+Data$New <- List[3]
+Data
+#```
+
+```{r}
+cc_om$`Actividad 07` <- as.numeric(as.character(cc_om$`Actividad 07`))
+cc_om$`Actividad 08` <- as.numeric(as.character(cc_om$`Actividad 08`))
+cc_om$`Actividad 09` <- as.numeric(as.character(cc_om$`Actividad 09`))
+cc_om$`Actividad 10` <- as.numeric(as.character(cc_om$`Actividad 10`))
+cc_om$`Actividad 11` <- as.numeric(as.character(cc_om$`Actividad 11`))
+cc_om$`Actividad 12` <- as.numeric(as.character(cc_om$`Actividad 12`))
+cc_om$`Actividad 13` <- as.numeric(as.character(cc_om$`Actividad 13`))
+cc_om$`Actividad 14` <- as.numeric(as.character(cc_om$`Actividad 14`))
+cc_om$`Actividad 15` <- as.numeric(as.character(cc_om$`Actividad 15`))
+cc_om$`Actividad 16` <- as.numeric(as.character(cc_om$`Actividad 16`))
+cc_om$`Actividad 17` <- as.numeric(as.character(cc_om$`Actividad 17`))
+cc_om$`Actividad 18` <- as.numeric(as.character(cc_om$`Actividad 18`))
+cc_om$`Actividad 19` <- as.numeric(as.character(cc_om$`Actividad 19`))
+cc_om$`Actividad 20` <- as.numeric(as.character(cc_om$`Actividad 20`))
+cc_om$`Actividad 21` <- as.numeric(as.character(cc_om$`Actividad 21`))
+cc_om$`Actividad 22` <- as.numeric(as.character(cc_om$`Actividad 22`))
+cc_om$`Actividad 23` <- as.numeric(as.character(cc_om$`Actividad 23`))
+cc_om$`Actividad 24` <- as.numeric(as.character(cc_om$`Actividad 24`))
+cc_om$`Actividad 25` <- as.numeric(as.character(cc_om$`Actividad 25`))
+cc_om$`Actividad 26` <- as.numeric(as.character(cc_om$`Actividad 26`))
+cc_om$`Actividad 27` <- as.numeric(as.character(cc_om$`Actividad 27`))
+cc_om$`Actividad 28` <- as.numeric(as.character(cc_om$`Actividad 28`))
+cc_om$`Actividad 29` <- as.numeric(as.character(cc_om$`Actividad 29`))
+cc_om$`Actividad 30` <- as.numeric(as.character(cc_om$`Actividad 30`))
+cc_om$`Actividad 31` <- as.numeric(as.character(cc_om$`Actividad 31`))
+
+om_prog <- cc_om %>% select('Programa', 'Actividad 01', 'Actividad 02', 
+                            'Actividad 03', 'Actividad 04', 'Actividad 05', 'Actividad 06', 'Actividad 07', 'Actividad 08', 
+                           'Actividad 09', 'Actividad 10', 'Actividad 11', 'Actividad 12', 'Actividad 13', 'Actividad 14', 
+                           'Actividad 15', 'Actividad 16', 'Actividad 17', 'Actividad 18', 'Actividad 19', 'Actividad 20', 
+                           'Actividad 21', 'Actividad 22', 'Actividad 23', 'Actividad 24', 'Actividad 25', 'Actividad 26', 
+                           'Actividad 27', 'Actividad 28', 'Actividad 29', 'Actividad 30', 'Actividad 31', 
+                           'Calificación Final')
+om_grupo <- cc_om %>% select('Grupo', 'Actividad 01', 'Actividad 02', 
+                            'Actividad 03', 'Actividad 04', 'Actividad 05', 'Actividad 06', 'Actividad 07', 'Actividad 08', 
+                           'Actividad 09', 'Actividad 10', 'Actividad 11', 'Actividad 12', 'Actividad 13', 'Actividad 14', 
+                           'Actividad 15', 'Actividad 16', 'Actividad 17', 'Actividad 18', 'Actividad 19', 'Actividad 20', 
+                           'Actividad 21', 'Actividad 22', 'Actividad 23', 'Actividad 24', 'Actividad 25', 'Actividad 26', 
+                           'Actividad 27', 'Actividad 28', 'Actividad 29', 'Actividad 30', 'Actividad 31', 
+                           'Calificación Final')
+om_mater <- cc_om %>% select('Materia', 'Actividad 01', 'Actividad 02', 
+                            'Actividad 03', 'Actividad 04', 'Actividad 05', 'Actividad 06', 'Actividad 07', 'Actividad 08', 
+                           'Actividad 09', 'Actividad 10', 'Actividad 11', 'Actividad 12', 'Actividad 13', 'Actividad 14', 
+                           'Actividad 15', 'Actividad 16', 'Actividad 17', 'Actividad 18', 'Actividad 19', 'Actividad 20', 
+                           'Actividad 21', 'Actividad 22', 'Actividad 23', 'Actividad 24', 'Actividad 25', 'Actividad 26', 
+                           'Actividad 27', 'Actividad 28', 'Actividad 29', 'Actividad 30', 'Actividad 31', 
+                           'Calificación Final')
+om_matri <- cc_om %>% select('Matrícula', 'Actividad 01', 'Actividad 02', 
+                            'Actividad 03', 'Actividad 04', 'Actividad 05', 'Actividad 06', 'Actividad 07', 'Actividad 08', 
+                           'Actividad 09', 'Actividad 10', 'Actividad 11', 'Actividad 12', 'Actividad 13', 'Actividad 14', 
+                           'Actividad 15', 'Actividad 16', 'Actividad 17', 'Actividad 18', 'Actividad 19', 'Actividad 20', 
+                           'Actividad 21', 'Actividad 22', 'Actividad 23', 'Actividad 24', 'Actividad 25', 'Actividad 26', 
+                           'Actividad 27', 'Actividad 28', 'Actividad 29', 'Actividad 30', 'Actividad 31', 
+                           'Calificación Final')
+om_doc <- cc_om %>% select('Docente', 'Actividad 01', 'Actividad 02', 
+                            'Actividad 03', 'Actividad 04', 'Actividad 05', 'Actividad 06', 'Actividad 07', 'Actividad 08', 
+                           'Actividad 09', 'Actividad 10', 'Actividad 11', 'Actividad 12', 'Actividad 13', 'Actividad 14', 
+                           'Actividad 15', 'Actividad 16', 'Actividad 17', 'Actividad 18', 'Actividad 19', 'Actividad 20', 
+                           'Actividad 21', 'Actividad 22', 'Actividad 23', 'Actividad 24', 'Actividad 25', 'Actividad 26', 
+                           'Actividad 27', 'Actividad 28', 'Actividad 29', 'Actividad 30', 'Actividad 31', 
+                           'Calificación Final')
+om_corr <- cc_om %>% select('Programa', 'Grupo', 'Materia', 'Docente', 'Calificación Final')
+
+av_prog <- aggregate(om_prog, list(om_prog$Programa), mean)
+av_grupo <- aggregate(om_grupo, list(om_grupo$Grupo), mean)
+av_mater <- aggregate(om_mater, list(om_mater$Materia), mean)
+#av_matri <- aggregate(om_matri, list(om_matri$Matricula), mean)
+av_doc <- aggregate(om_doc, list(om_doc$Docente), mean)
+
+av_prog[order(av_prog$`Calificación Final`),]
+av_grupo[order(av_grupo$`Calificación Final`),]
+av_mater[order(av_mater$`Calificación Final`),]
+av_doc[order(av_doc$`Calificación Final`),]
+```
+
+```{r}
+Programa <- 'C:/Users/Propietario/Desktop/Calificaciones OM/Programa.xlsx'
+Grupo <- 'C:/Users/Propietario/Desktop/Calificaciones OM/Grupo.xlsx'
+Materia <- 'C:/Users/Propietario/Desktop/Calificaciones OM/Materia.xlsx'
+Matricula <- 'C:/Users/Propietario/Desktop/Calificaciones OM/Matricula.xlsx'
+Docente <- 'C:/Users/Propietario/Desktop/Calificaciones OM/Docente.xlsx'
+AV_Programa <- 'C:/Users/Propietario/Desktop/Calificaciones OM/AV_Programa.xlsx'
+AV_Grupo <- 'C:/Users/Propietario/Desktop/Calificaciones OM/AV_Grupo.xlsx'
+AV_Materia <- 'C:/Users/Propietario/Desktop/Calificaciones OM/AV_Materia.xlsx'
+#AV_Matricula <- 'C:/Users/Propietario/Desktop/Calificaciones OM/AV_Matricula.xlsx'
+AV_Docente <- 'C:/Users/Propietario/Desktop/Calificaciones OM/AV_Docente.xlsx'
+
+write.xlsx(om_prog, Programa, sheetName = "Programa", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(om_grupo, Grupo, sheetName = "Grupo", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(om_mater, Materia, sheetName = "Materia", col.names = TRUE, row.names = TRUE, append = FALSE)
+#write.xlsx(om_matri, Matricula, sheetName = "Matricula", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(om_doc, Docente, sheetName = "Docente", col.names = TRUE, row.names = TRUE, append = FALSE)
+
+write.xlsx(av_prog, AV_Programa, sheetName = "Programa", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(av_grupo, AV_Grupo, sheetName = "Grupo", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(av_mater, AV_Materia, sheetName = "Materia", col.names = TRUE, row.names = TRUE, append = FALSE)
+#write.xlsx(av_matri, AV_Matricula, sheetName = "Matricula", col.names = TRUE, row.names = TRUE, append = FALSE)
+write.xlsx(av_doc, AV_Docente, sheetName = "Docente", col.names = TRUE, row.names = TRUE, append = FALSE)
+```
+
